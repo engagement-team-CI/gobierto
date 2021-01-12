@@ -1,5 +1,5 @@
 <template>
-  <div :class="`tree-map-nested-container tree-map-nested-container-${treemapId}`">
+  <div :class="`treemap-nested-container treemap-nested-container-${treemapId}`">
     <div
       :id="`treemap-nested-sidebar-${treemapId}`"
       class="treemap-nested-sidebar"
@@ -30,11 +30,11 @@
     </div>
     <div
       :id="`treemap-nested-tooltip-first-depth-${treemapId}`"
-      class="tree-map-nested-tooltip-first"
+      class="treemap-nested-tooltip-first"
     />
     <div
       :id="`treemap-nested-tooltip-second-depth-${treemapId}`"
-      class="tree-map-nested-tooltip-second"
+      class="treemap-nested-tooltip-second"
     />
     <svg
       :id="`treemap-nested-${treemapId}`"
@@ -188,7 +188,7 @@ export default {
     },
     $route(to, from) {
       if (to !== from) {
-        this.containerChart = document.querySelector('.tree-map-nested-container');
+        this.containerChart = document.querySelector('.treemap-nested-container');
         this.svgWidth = this.containerChart.offsetWidth;
         this.transformDataTreemap(this.dataTreeMapWithoutCoordinates)
       }
@@ -203,7 +203,7 @@ export default {
     }
   },
   mounted() {
-    this.containerChart = document.querySelector('.tree-map-nested-container');
+    this.containerChart = document.querySelector('.treemap-nested-container');
     this.svgWidth = this.containerChart.offsetWidth;
     this.dataTreeMapWithoutCoordinates = JSON.parse(JSON.stringify(this.data));
     this.dataTreeMapSizeContracts = JSON.parse(JSON.stringify(this.data));
@@ -273,10 +273,16 @@ export default {
         .paddingInner(0)
         .round(false);
 
+      const containerChart = d3.select(`.treemap-nested-container-${treemapId}`)
+
       const svg = d3.select(`#treemap-nested-${treemapId}`)
         .append("g")
         .attr('class', `treemap-container-${treemapId}`)
         .style("shape-rendering", "crispEdges");
+
+      containerChart.on('mouseleave', function() {
+        closeTooltips()
+      })
 
       const navBreadcrumbs = d3.select(`#treemap-nested-sidebar-nav-${treemapId}`)
         .append('p')
@@ -308,10 +314,10 @@ export default {
           .append("g")
           .datum(d)
           .attr('fill', d => {
+            const { depth } = d
             let valueColor
-            if (scaleColor) {
-              const { depth } = d
-              valueColor = depth === 2 ? d.color = d.color = this.colors(d.parent.data.name) : depth === 3 || depth === 4 ? d.color = this.colors(d.data.children[0].contractor) : ''
+            if (scaleColor && depth === 3) {
+              valueColor = this.colors(d.data.children[0].contractor)
             } else {
               valueColor = '#12365b'
             }
@@ -327,13 +333,14 @@ export default {
           .join('rect')
           .attr('class', 'children')
           .attr('fill', d => {
+            let valueColor
             if (scaleColor) {
               const { depth } = d
-              const valueColor = depth === 1 ? d.color = this.colors(d.data.name) : d.color = this.colors(d.parent.data.name)
-              return valueColor
+              valueColor = depth === 1 ? this.colors(d.data.name) : depth === 2 ? this.colors(d.parent.data.name) : depth === 3 || depth === 4 ? this.colors(d.data.children[0].contractor) : ''
             } else {
-              return '#12365b'
+              valueColor = '#12365b'
             }
+            return valueColor
           })
           .on("click", transition);
 
@@ -405,24 +412,14 @@ export default {
           .on('mousemove', (d, i, event) => {
             this.$emit('showTooltip', d, i, selected_size, event)
           })
-          .on('mouseout', function() {
-            tooltipSecondDepth
-              .style("opacity", 1)
-              .transition()
-              .duration(200)
-              .style("opacity", 0)
-              .style("display", "none")
 
-            tooltipFirstDepth
-              .style("opacity", 1)
-              .transition()
-              .duration(200)
-              .style("opacity", 0)
-              .style("display", "none")
-          })
+        const self = this
 
         function transition(d) {
           if (transitioning || !d) return;
+
+          closeTooltips()
+
           transitioning = true;
           const g2 = display(d);
           const t1 = g1.transition().duration(450).ease(d3.easeLinear);
@@ -471,6 +468,7 @@ export default {
             this.remove();
             transitioning = false;
           });
+          labelTotalContracts = self.labelTotalPlural
         }
 
         function treeMapTwoDepth(d) {
@@ -582,7 +580,7 @@ export default {
             valueTotalAmount = selected_size === amountKey ? d.value : valueTotalAmount
 
             if (totalContracts) {
-              labelTotalContracts = totalContracts.length < 1 ? labelTotalUnique : labelTotalContracts
+              labelTotalContracts = totalContracts.length <= 1 ? labelTotalUnique : labelTotalContracts
             }
             htmlForRect = `<p class="title">${title}</p>
               <p class="text">${money(valueTotalAmount)}</p>
@@ -652,6 +650,22 @@ export default {
 
       display(root);
 
+      function closeTooltips() {
+        tooltipSecondDepth
+          .style("opacity", 1)
+          .transition()
+          .duration(200)
+          .style("opacity", 0)
+          .style("display", "none")
+
+        tooltipFirstDepth
+          .style("opacity", 1)
+          .transition()
+          .duration(200)
+          .style("opacity", 0)
+          .style("display", "none")
+      }
+
       function text(text) {
         text.attr("x", d => x(d.x) + 6)
           .attr("y", d => y(d.y) + 6);
@@ -710,7 +724,7 @@ export default {
     },
     resizeListener() {
       window.addEventListener("resize", () => {
-        const containerChart = document.querySelector('.tree-map-nested-container');
+        const containerChart = document.querySelector('.treemap-nested-container');
         this.svgWidth = containerChart.offsetWidth
         if (this.updateData) {
           this.deepCloneData(this.dataNewValues)

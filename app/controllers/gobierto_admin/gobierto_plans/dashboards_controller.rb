@@ -7,7 +7,7 @@ module GobiertoAdmin
 
       before_action :plan
 
-      helper_method :current_admin_actions, :dashboard_preview_url
+      helper_method :current_admin_actions, :dashboard_preview_path
 
       def current_admin_actions
         @current_admin_actions ||= DashboardPolicy.new(
@@ -23,7 +23,7 @@ module GobiertoAdmin
 
       protected
 
-      def dashboard_preview_url(dashboard, options = {})
+      def dashboard_preview_path(dashboard, options = {})
         plan = dashboard.context_resource
 
         return unless plan.is_a?(::GobiertoPlans::Plan)

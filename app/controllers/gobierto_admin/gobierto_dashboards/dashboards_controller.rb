@@ -8,15 +8,12 @@ module GobiertoAdmin
 
       def index
         @context = "context"
-      end
-
-      def show
-        # dashboard ID/context example
-        find_dashboard
+        @data_pipe = "project_metrics" # Editar esto
       end
 
       def edit
         find_dashboard
+        @data_pipe = "project_metrics" # Editar esto
       end
 
       def create

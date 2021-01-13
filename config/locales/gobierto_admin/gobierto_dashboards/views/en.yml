@@ -6,5 +6,9 @@ en:
         form:
           placeholders:
             title: Indicators
+        list_modal:
+          add: Add
+          new: "¿Do you need to create a new dashboard?"
+          title: Choose a dashboard where include the indicator
         new_modal:
           title: New dashboard

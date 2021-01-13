@@ -59,7 +59,7 @@
       </td>
       <td>
         <% unless dashboard.draft? %>
-          <%= link_to "#", target: "_blank", class: "view_item" do %>
+          <%= link_to dashboard_preview_url(dashboard), target: "_blank", class: "view_item" do %>
             <i class="fas fa-eye"></i>
             <%= t(".view_public_dashboard") %>
           <% end %>

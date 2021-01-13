@@ -279,9 +279,7 @@ export default {
         .attr('class', `treemap-container-${treemapId}`)
         .style("shape-rendering", "crispEdges");
 
-      containerChart.on('mouseleave', function() {
-        self.this.closeTooltips()
-      })
+      containerChart.on('mouseleave', this.closeTooltips)
 
       const navBreadcrumbs = d3.select(`#treemap-nested-sidebar-nav-${treemapId}`)
         .append('p')
@@ -297,7 +295,7 @@ export default {
         navBreadcrumbs
           .datum(d.parent)
           .html(breadcrumbs(d))
-          .call(checkSizeBreadcumbs)
+          .call(checkSizeBreadcrumbs)
 
         navBreadcrumbs.selectAll("span")
           .datum(d)
@@ -313,14 +311,10 @@ export default {
           .append("g")
           .datum(d)
           .attr('fill', d => {
-            const { depth } = d
-            let valueColor
-            if (scaleColor && depth === 3) {
-              valueColor = this.colors(d.data.children[0].contractor)
-            } else {
-              valueColor = '#12365b'
-            }
-            return valueColor
+            const { depth, data } = d
+            const [ contracts ] = data?.children || []
+            const { contractor } = contracts || {}
+            return scaleColor && depth === 3 ? this.colors(contractor) : '#12365b'
           })
           .attr('class', 'depth')
 
@@ -332,14 +326,10 @@ export default {
           .join('rect')
           .attr('class', 'children')
           .attr('fill', d => {
-            let valueColor
-            if (scaleColor) {
-              const { depth } = d
-              valueColor = depth === 1 ? this.colors(d.data.name) : depth === 2 ? this.colors(d.parent.data.name) : depth === 3 || depth === 4 ? this.colors(d.data.children[0].contractor) : ''
-            } else {
-              valueColor = '#12365b'
-            }
-            return valueColor
+            const { depth, data, parent } = d
+            const [ contracts ] = data?.children || []
+            const { contractor } = contracts || {}
+            return scaleColor && depth === 1 ? this.colors(data?.name) : scaleColor && depth === 2 ? this.colors(parent?.data?.name) : scaleColor && depth === 3 || depth === 4 ? this.colors(contractor) : '#12365b'
           })
           .on("click", transition);
 
@@ -691,18 +681,34 @@ export default {
           if (res.includes('<b>')) {
             res = res.replace(/<b>/g, '').replace(/<\/b>/g, '')
           }
-          res += `<span class="treemap-nested-breadcrumb"><b>${data.name}</b></span>` + sep;
+          res += `<span class="treemap-nested-breadcrumb treemap-nested-breadcrumb-${treemapId}"><b>${data.name}</b></span>` + sep;
         });
         return res.split(sep).filter(i => i !== "").join(sep);
       }
 
-      function checkSizeBreadcumbs() {
+      function checkSizeBreadcrumbs() {
+
+        /*In breadcrumbs, any level can be the largest, so we have to know which element is the largest to add the ellipsis class.*/
+
+        //Get all elements
+        const sizeBreadcrumbs = document.querySelectorAll(`.treemap-nested-breadcrumb-${treemapId}`)
+        //Convert nodeList into array
+        const breadcrumbsArr = Array.prototype.slice.call(sizeBreadcrumbs);
+        //Sum offsetWidth
+        const sidebarNav = breadcrumbsArr.map(item => item.offsetWidth).reduce((prev, next) => prev + next);
+
+        //Create an array only with the offsetWidth
+        const breacumbWidth = breadcrumbsArr.map(({ offsetWidth }) => offsetWidth);
+        //Get the max value
+        const maxValue = Math.max.apply(Math, breacumbWidth);
+        //Get the index of the max value
+        const indexBreadcumb = breacumbWidth.indexOf(maxValue);
+
         const sidebarAvailableWidth = (document.querySelector('.treemap-nested-sidebar').offsetWidth - document.querySelector('.treemap-nested-sidebar-button-group').offsetWidth)
 
-        const sidebarNav = document.querySelector('.treemap-nested-sidebar-nav').offsetWidth;
-
-        const treeMapSidebarNavContainer = document.querySelector('.treemap-nested-sidebar-nav-breadcumb');
-        if (sidebarNav > sidebarAvailableWidth) treeMapSidebarNavContainer.classList.add('ellipsis')
+        if (sidebarNav > sidebarAvailableWidth) {
+          sizeBreadcrumbs[indexBreadcumb].classList.add('ellipsis')
+        }
       }
     },
     resizeListener() {

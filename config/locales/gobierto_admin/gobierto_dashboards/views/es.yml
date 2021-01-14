@@ -6,5 +6,9 @@ es:
         form:
           placeholders:
             title: Indicadores
+        list_modal:
+          add: Añadir
+          new: "¿Necesita crear un nuevo dashboard?"
+          title: Seleccione el dashboard donde incluir este indicador
         new_modal:
           title: Nuevo dashboard

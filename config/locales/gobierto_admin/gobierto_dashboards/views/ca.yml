@@ -6,5 +6,9 @@ ca:
         form:
           placeholders:
             title: Indicadors
+        list_modal:
+          add: Afegiu-hi
+          new: "¿Necessiteu crear un nou dashboard?"
+          title: Seleccioneu el dashboard on incloure aquest indicador
         new_modal:
           title: Nou dashboard

@@ -195,10 +195,6 @@ module GobiertoDashboards
             %w(title context visibility_level widgets_configuration).each do |attribute|
               assert_equal dashboard.send(attribute), item[attribute]
             end
-
-            # assert response_data.has_key? "links"
-            # assert_includes response_data["links"].values, gobierto_dashboards_api_v1_dashboards_path
-            # assert_includes response_data["links"].values, meta_gobierto_dashboards_api_v1_dashboards_path
           end
         end
 
@@ -315,10 +311,10 @@ module GobiertoDashboards
 
             assert_response :success
 
-            response_data = response.parsed_body
+            response_body = response.parsed_body
 
-            # pending to add the data key:
-            # assert response_data.has_key? "data"
+            assert response_body.has_key? "data"
+            response_data = response_body["data"]
 
             indicator_names = response_data.map { |indicator| indicator["name"] }
             indicator_ids = response_data.map { |indicator| indicator["id"] }

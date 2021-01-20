@@ -102,6 +102,9 @@ export default {
     indicator() {
       return this.$root.$data?.indicator;
     },
+    indicatorContext() {
+      return this.$root.$data?.indicatorContext;
+    },
     context() {
       return this.$root.$data?.context;
     },
@@ -129,13 +132,13 @@ export default {
     async getConfiguration() {
       ({ data: { data: this.configuration } = {} } = this.id
         ? await this.getDashboard(this.id)
-        : { data: {} });
+        : { data: { data: {} } });
 
       if (this.indicator) {
         // autoloads the indicator provided via props
         this.setConfiguration("widgets_configuration", [...(this.configuration?.attributes?.widgets_configuration || []), {
           ...this.cards['INDICATOR'],
-          indicator: this.indicator,
+          indicator: `${this.indicator}---${this.indicatorContext}`,
           i: `INDICATOR-${seed()}`,
           x: 0,
           y: 0

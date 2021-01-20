@@ -131,7 +131,7 @@ window.GobiertoAdmin.GobiertoCommonCustomFieldRecordsTablePluginController = (fu
             addDashboardBtn.classList.add("is-active")
 
             const url = new URL(addDashboardBtn.href)
-            url.search = new URLSearchParams(data).toString()
+            url.search = new URLSearchParams({ ...data, indicator_context: addDashboardBtn.dataset?.indicatorContext }).toString()
             addDashboardBtn.href = url
           }
         })

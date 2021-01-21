@@ -1,5 +1,5 @@
 <template>
-  <Header>
+  <Header :highlight="isDirty">
     <div class="dashboards-maker--header m_b_1">
       <slot name="title" />
 
@@ -27,7 +27,16 @@
       <div class="dashboards-maker--button">
         <i v-if="isDirty">{{ changesLabel }}</i>
         <Button
+          v-if="isDirty"
+          template="link"
+          :class="{ 'is-shaking': shaking }"
+          @click.native="handleCloseButton"
+        >
+          {{ closeNoSaveLabel }}
+        </Button>
+        <Button
           :disabled="!isDirty"
+          :class="{ 'is-shaking': shaking }"
           @click.native="handleSaveButton"
         >
           {{ saveLabel }}
@@ -56,13 +65,18 @@ export default {
       type: Boolean,
       default: true
     },
+    shaking: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {
       deleteLabel: I18n.t("gobierto_dashboards.delete") || "",
       saveLabel: I18n.t("gobierto_dashboards.save") || "",
       viewItemLabel: I18n.t("gobierto_dashboards.view_item") || "",
-      changesLabel: I18n.t("gobierto_dashboards.changes") || ""
+      changesLabel: I18n.t("gobierto_dashboards.changes") || "",
+      closeNoSaveLabel: I18n.t("gobierto_dashboards.discard") || ""
     };
   },
   methods: {
@@ -74,6 +88,9 @@ export default {
     },
     handleSaveButton() {
       this.$emit('save')
+    },
+    handleCloseButton() {
+      this.$emit('close')
     },
   }
 };

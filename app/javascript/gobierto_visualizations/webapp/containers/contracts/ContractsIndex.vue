@@ -1,25 +1,54 @@
 <template>
-  <Table
-    :items="items"
-    :routing-member="'contracts_show'"
-    :columns="columns"
-  />
+  <div>
+    <Table
+      :data="displayedData"
+      :order-column="'assignee'"
+      :columns="contractsColumns"
+      :show-columns="showColumns"
+      @update-show-columns="updateShowColumns"
+    >
+      <template
+        #columns="{ toggleVisibility }"
+      >
+        <TableColumnsSelector
+          :columns="contractsColumns"
+          :show-columns="showColumns"
+          @toggle-visibility="toggleVisibility"
+        />
+      </template>
+    </Table>
+    <Pagination
+      :data="items"
+      :items-per-page="15"
+      :container-pagination="containerPagination"
+      @showData="updateData"
+    />
+  </div>
 </template>
 
 <script>
-import Table from "../../components/Table.vue";
+import { Table, TableColumnsSelector, Pagination } from "lib/vue-components";
 import { EventBus } from "../../mixins/event_bus";
 import { contractsColumns } from "../../lib/config/contracts.js";
 
 export default {
   name: 'ContractsIndex',
   components: {
-    Table
+    Table,
+    TableColumnsSelector,
+    Pagination
   },
   data() {
     return {
       contractsData: this.$root.$data.contractsData,
-      items: []
+      contractsColumns: contractsColumns,
+      tableData: [],
+      items: [],
+      showColumns: [],
+      columns: [],
+      allColumns: [],
+      displayedData: [],
+      containerPagination: '.visualizations-home-main'
     }
   },
   watch: {
@@ -39,6 +68,7 @@ export default {
 
     this.items = this.contractsData
     this.columns = contractsColumns;
+    this.showColumns = ['assignee', 'title', 'award_date', 'final_amount_no_taxes']
   },
   beforeDestroy(){
     EventBus.$off('refresh-summary-data');
@@ -48,6 +78,12 @@ export default {
       this.value = value || ''
 
       this.items = this.contractsData.filter(contract => contract.assignee.toLowerCase().includes(this.value.toLowerCase()) || contract.title.toLowerCase().includes(this.value.toLowerCase()))
+    },
+    updateData(values) {
+      this.displayedData = values
+    },
+    updateShowColumns(values) {
+      this.showColumns = values
     }
   }
 }

@@ -2,9 +2,11 @@
   <div>
     <Table
       :data="items"
-      :order-column="'final_amount_no_taxes'"
+      :order-column="'assignee'"
       :columns="contractsColumns"
       :show-columns="showColumns"
+      :routing-member="'contracts_show'"
+      :routing-id="'id'"
       @update-show-columns="updateShowColumns"
     >
       <template
@@ -35,11 +37,9 @@ export default {
     return {
       contractsData: this.$root.$data.contractsData,
       contractsColumns: contractsColumns,
-      tableData: [],
       items: [],
       showColumns: [],
-      columns: [],
-      allColumns: []
+      columns: []
     }
   },
   watch: {

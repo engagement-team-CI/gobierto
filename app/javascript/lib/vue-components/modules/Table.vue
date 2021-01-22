@@ -28,62 +28,73 @@
         </template>
       </thead>
       <tbody>
-        <tr
+        <template
           v-for="(item, index) in dataTable"
-          :key="index"
         >
-          <template
-            v-for="{key, field, type, cssClass} in filterColumns"
+          <router-link
+            :key="index"
+            :to="{ name: routingMember, params: {id: item[routingId] } }"
+            tag="tr"
+            class="gobierto-table__tr"
           >
-            <template v-if="type === 'money'">
-              <td
-                :key="key"
-                :class="cssClass"
-                class="gobierto-table__td"
-              >
-                {{ money(item[field]) }}
-              </td>
+            <template
+              v-for="{key, field, type, cssClass} in filterColumns"
+            >
+              <template v-if="type === 'money'">
+                <td
+                  :key="key"
+                  :class="cssClass"
+                  class="gobierto-table__td"
+                >
+                  <span>
+                    {{ money(item[field]) }}
+                  </span>
+                </td>
+              </template>
+              <template v-else-if="type === 'date'">
+                <td
+                  :key="key"
+                  :class="cssClass"
+                  class="gobierto-table__td"
+                >
+                  <span>
+                    {{ item[field] }}
+                  </span>
+                </td>
+              </template>
+              <template v-else-if="type === 'link'">
+                <td
+                  :key="key"
+                  :class="cssClass"
+                  class="gobierto-table__td"
+                >
+                  <span>
+                    <a href="#">{{ item[field] }}</a>
+                  </span>
+                </td>
+              </template>
+              <template v-else-if="type === 'truncate'">
+                <td
+                  :key="key"
+                  class="gobierto-table__td"
+                >
+                  <span :class="cssClass">
+                    {{ item[field] }}
+                  </span>
+                </td>
+              </template>
+              <template v-else>
+                <td
+                  :key="key"
+                  :class="cssClass"
+                  class="gobierto-table__td"
+                >
+                  <span>{{ item[field] }}</span>
+                </td>
+              </template>
             </template>
-            <template v-else-if="type === 'date'">
-              <td
-                :key="key"
-                :class="cssClass"
-                class="gobierto-table__td"
-              >
-                {{ item[field] }}
-              </td>
-            </template>
-            <template v-else-if="type === 'link'">
-              <td
-                :key="key"
-                :class="cssClass"
-                class="gobierto-table__td"
-              >
-                <a href="#">{{ item[field] }}</a>
-              </td>
-            </template>
-            <template v-else-if="type === 'truncate'">
-              <td
-                :key="key"
-                :class="cssClass"
-                class="gobierto-table__td"
-              >
-                <span :class="cssClass">
-                  {{ item[field] }}
-                </span>
-              </td>
-            </template>
-            <template v-else>
-              <td
-                :key="key"
-                :class="cssClass"
-                class="gobierto-table__td"
-              >
-                {{ item[field] }}
-              </td>
-            </template>
-          </template>
-        </tr>
+          </router-link>
+        </template>
       </tbody>
     </table>
     <Pagination
@@ -126,6 +137,14 @@ export default {
     showColumns: {
       type: Array,
       default: () => []
+    },
+    routingMember: {
+      type: String,
+      default: ''
+    },
+    routingId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -168,12 +187,11 @@ export default {
   methods: {
     handleTableHeaderClick(id) {
       const { sort } = this.map.get(id);
-      this.currentSortColumn = sort !== "down" ? id : this.$options.defaults.sortColumn;
-      // toggle sort order: up -> down -> undefined
-      let sortDirection = typeof sort === "undefined" ? "up" : sort === "up" ? "down" : undefined;
-      this.currentSort = sortDirection ? sortDirection : this.$options.defaults.sortDirection
+      this.currentSortColumn = id;
+      // toggle sort order
+      this.currentSort = sort === "up" ? "down" : "up";
       // update the order for the item clicked
-      this.map.set(id, { ...this.map.get(id), sort: sortDirection });
+      this.map.set(id, { ...this.map.get(id), sort: this.currentSort });
     },
     getSorting(column) {
       // ignore the first item of the tuple
@@ -211,5 +229,4 @@ export default {
     },
   }
 }
-
 </script>

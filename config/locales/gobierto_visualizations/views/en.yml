@@ -35,8 +35,10 @@ en:
             (Bidders)
           contract_amount: Contract amount
           entity: Entity
+          open_proposals_date: Open proposals
           process: Process
           question_description: What % of the budget is this contract?
+          submission_date: Submission date
           tender: Tender
           type: Type
         date: Date

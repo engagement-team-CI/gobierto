@@ -1,8 +1,5 @@
 <template>
-  <div
-    data-testid="table-component"
-    class="gobierto-table"
-  >
+  <div class="gobierto-table">
     <div class="gobierto-table__header">
       <slot name="title" />
       <slot
@@ -47,7 +44,7 @@
                   class="gobierto-table__td"
                 >
                   <span>
-                    {{ money(item[field]) }}
+                    {{ item[field] | money }}
                   </span>
                 </td>
               </template>
@@ -58,18 +55,7 @@
                   class="gobierto-table__td"
                 >
                   <span>
-                    {{ item[field] }}
-                  </span>
-                </td>
-              </template>
-              <template v-else-if="type === 'link'">
-                <td
-                  :key="key"
-                  :class="cssClass"
-                  class="gobierto-table__td"
-                >
-                  <span>
-                    <a href="#">{{ item[field] }}</a>
+                    {{ item[field] | date }}
                   </span>
                 </td>
               </template>
@@ -171,7 +157,7 @@ export default {
       return this.data || []
     },
     rowsSorted() {
-      const id = this.currentSortColumn.field || this.orderColumn;
+      const id = this.currentSortColumn.field;
       const sort = this.currentSort;
       return this.tmpRows
         .slice()

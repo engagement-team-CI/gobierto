@@ -54,7 +54,7 @@ import { interpolate } from 'd3-interpolate';
 import { sumDataByGroupKey } from "../lib/utils";
 import { mean, median } from "d3-array";
 import { nest } from "d3-collection";
-import { createScaleColors, normalizeString } from "lib/shared";
+import { createScaleColors, slugString } from "lib/shared";
 import { money } from "lib/vue/filters";
 
 const d3 = { select, selectAll, treemap, stratify, scaleLinear, scaleOrdinal, mouse, easeLinear, mean, median, nest, hierarchy, treemapBinary, interpolate }
@@ -381,7 +381,7 @@ export default {
             } else if (depth === 3) {
               let contractType = d.data.contract_type || ''
               //Normalize and create an slug because Servicios de Gestión Públicos isn't a valid css class
-              contractType = normalizeString(contractType)
+              contractType = slugString(contractType)
               return `treemap-nested-container-text ${contractType}`
             }
             return 'treemap-nested-container-text'
@@ -434,7 +434,7 @@ export default {
             } else if (depth === 3) {
               let contractType = d.data.contract_type || ''
               //Normalize and create an slug because Servicios de Gestión Públicos isn't a valid css class
-              contractType = normalizeString(contractType)
+              contractType = slugString(contractType)
               return `treemap-nested-container-text ${contractType}`
             }
             return 'treemap-nested-container-text'

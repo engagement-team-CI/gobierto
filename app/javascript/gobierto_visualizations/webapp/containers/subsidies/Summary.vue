@@ -242,7 +242,6 @@ export default {
         groupedByBeneficiary[beneficiary_name].count++;
       });
 
-
       // Sort grouped elements by number of subsidies
       const sortedAndGrouped = Object.values(groupedByBeneficiary).sort((a, b) => { return a.count < b.count ? 1 : -1 });
 

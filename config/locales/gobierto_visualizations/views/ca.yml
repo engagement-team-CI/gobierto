@@ -57,7 +57,7 @@ ca:
         permalink: Consulteu aquest contracte a la Plataforma de Contractació del
           Sector Públic
         process_type: Tipus de procés
-        search_placeholder: Cerqueu per adjudicatari
+        search_placeholder: Cerqueu per adjudicatari o per títol del contracte
         status: Estat
         submission_date: Data
         summary:

@@ -37,11 +37,13 @@
         <template
           v-for="(item, index) in dataTable"
         >
-          <tr
+          <component
+            :is="selectHTMLTag"
             :key="index"
             :class="{ 'is-clickable': isRowClickable }"
             class="gobierto-table__tr"
-            @click="isRowClickable ? onRowClick(item) : null"
+            :href="isRowClickable ? `${routingName}/${item[routingId]}` : null"
+            @click.prevent="isRowClickable ? goesToTableItem(item) : null"
           >
             <template v-for="[id, { name, index, type, cssClass }] in arrayColumnsFiltered">
               <template v-if="type === 'money'">
@@ -86,7 +88,7 @@
                 </td>
               </template>
             </template>
-          </tr>
+          </component>
         </template>
       </tbody>
     </table>
@@ -148,9 +150,17 @@ export default {
       type: Boolean,
       default: true
     },
-    onRowClick: {
-      type: Function,
-      default: null
+    routingId: {
+      type: String,
+      default: ''
+    },
+    routingName: {
+      type: String,
+      default: ''
+    },
+    routingComponent: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -186,7 +196,10 @@ export default {
       return this.direction === 'down' ? 'down' : 'down-alt'
     },
     isRowClickable() {
-      return !!this.onRowClick
+      return !!this.routingName && !!this.routingId
+    },
+    selectHTMLTag() {
+      return this.isRowClickable ? 'a' : 'tr'
     }
   },
   created() {
@@ -226,6 +239,9 @@ export default {
     filterColumns(columns) {
       this.mapColumns = columns
       this.arrayColumnsFiltered = Array.from(this.mapColumns).filter(([,{ visibility }]) => !!visibility)
+    },
+    goesToTableItem(item) {
+      this.$router.push({ name: this.routingComponent, params: { id: item[this.routingId] } })
     }
   }
 }

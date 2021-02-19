@@ -120,6 +120,17 @@
       line-height: 1;
     }
 
+    .link-last-depth {
+      display: block;
+      height: 100%;
+      .text,
+      .title {
+        text-decoration: none;
+        color: var(--white);
+        pointer-events: none;
+      }
+    }
+
   }
 
   .treemap-nested-container-text {

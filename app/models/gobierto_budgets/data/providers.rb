@@ -71,7 +71,7 @@ module GobiertoBudgets
       end
 
       def format_uri(format)
-        URI("/presupuestos/proveedores-facturas.#{ format }?filter_by_location_id=#{ site.organization_id }&date_date_range=#{ date_range }&sort_asc_by=date")
+        URI("https://#{site.domain}/presupuestos/proveedores-facturas.#{ format }?filter_by_location_id=#{ site.organization_id }&date_date_range=#{ date_range }&sort_asc_by=date")
       end
 
       def request_response(format)
@@ -79,7 +79,6 @@ module GobiertoBudgets
 
         res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
           req = Net::HTTP::Get.new uri
-          req["Origin"] = site.domain
           http.request req
         end
 

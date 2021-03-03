@@ -9,6 +9,7 @@ import {
 import Vue from "vue";
 import VueRouter from "vue-router";
 import { getRemoteData, calculateSumMeanMedian } from "../webapp/lib/utils";
+import { categoryTitleEng, categoryTitlesCat, categoryTitlesEsp } from "../webapp/lib/config/category_titles";
 import { EventBus } from "../webapp/mixins/event_bus";
 
 const d3 = { scaleThreshold, sum, mean, median, max };
@@ -139,6 +140,7 @@ export class ContractsController {
   }
 
   setGlobalVariables([contractsData, tendersData]) {
+    let contractsDataMap = this._translateCategoriesTitle(contractsData)
     const sortByField = dateField => {
       return function(a, b) {
         const aDate = a[dateField],
@@ -172,7 +174,7 @@ export class ContractsController {
       .domain(this._amountRange.domain)
       .range(this._amountRange.range);
 
-    const contractsDataMap = contractsData.map(({ final_amount_no_taxes = 0, initial_amount_no_taxes = 0, gobierto_start_date, assignee_id, ...rest }) => {
+    contractsDataMap = contractsData.map(({ final_amount_no_taxes = 0, initial_amount_no_taxes = 0, gobierto_start_date, assignee_id, ...rest }) => {
       return {
         final_amount_no_taxes: (final_amount_no_taxes && !Number.isNaN(final_amount_no_taxes)) ? parseFloat(final_amount_no_taxes): 0.0,
         initial_amount_no_taxes: (initial_amount_no_taxes && !Number.isNaN(initial_amount_no_taxes)) ? parseFloat(initial_amount_no_taxes): 0.0,
@@ -182,7 +184,6 @@ export class ContractsController {
         gobierto_start_date: new Date(gobierto_start_date),
         ...rest
       }
-
     })
 
     const tendersDataMap = tendersData.map(({ initial_amount_no_taxes = 0, submission_date, ...rest }) => {
@@ -205,6 +206,25 @@ export class ContractsController {
       ),
       tendersData: this.unfilteredTendersData
     };
+  }
+
+  _translateCategoriesTitle(contractsDataMap) {
+
+    const categoriesLanguage = I18n.locale === 'es' ? categoryTitlesEsp : categoryTitlesCat
+
+    contractsDataMap.map(d => {
+      const { category_title } = d
+      /*If the contract isn't categorized, we include it in other*/
+      if (!category_title) {
+        d.category_title = 'other'
+        d.category_id = '23'
+      }
+      const indexCategoriesEng = categoryTitleEng.findIndex(title => title === d.category_title);
+
+      d.category_title = categoriesLanguage[indexCategoriesEng]
+
+    })
+    return contractsDataMap
   }
 
   _renderSummary() {

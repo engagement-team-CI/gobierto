@@ -14,6 +14,8 @@ const less = require('./loaders/less')
 
 environment.loaders.append('less', less)
 environment.loaders.append('vue', vue)
+environment.loaders.delete('moduleCss')
+environment.loaders.delete('moduleSass')
 environment.loaders.delete('nodeModules')
 
 // plugins

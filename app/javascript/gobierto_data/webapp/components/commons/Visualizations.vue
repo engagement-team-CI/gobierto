@@ -10,6 +10,7 @@ import "@finos/perspective-viewer";
 import "@finos/perspective-viewer-datagrid";
 import "@finos/perspective-viewer-d3fc";
 import "@finos/perspective-viewer/themes/all-themes.css";
+import "lib/perspective-viewer-map";
 
 export default {
   name: "Visualizations",
@@ -96,7 +97,8 @@ export default {
       this.initPerspectiveWithSchema(replaceItems)
     },
     initPerspectiveWithSchema(data) {
-      this.viewer.setAttribute('plugin', this.typeChart)
+      // if no typeChart has been defined, and the dataset contains a gemetry column, loads the map-plugin by default
+      this.viewer.setAttribute('plugin', this.typeChart || this.arrayColumnsQuery.includes('geometry') ? 'map' : null)
       this.viewer.clear();
 
       const schema = this.objectColumns

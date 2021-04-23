@@ -56,7 +56,7 @@
           :items="items"
           :config="config"
           :object-columns="objectColumns"
-          :geom-column="geomColumn"
+          :config-map="configMap"
           @showSaving="showSavingDialog"
         />
       </template>
@@ -161,9 +161,9 @@ export default {
       type: Object,
       default: () => {}
     },
-    geomColumn: {
-      type: String,
-      default: ''
+    configMap: {
+      type: Object,
+      default: () => {}
     },
   },
   data() {

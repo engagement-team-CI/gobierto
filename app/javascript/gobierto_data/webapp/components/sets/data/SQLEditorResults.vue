@@ -69,12 +69,9 @@
         ref="viewer"
         :items="items"
         :object-columns="objectColumns"
-        :geom-column="geomColumn"
-        :type-chart="typeChart"
-        :reset-config-viz="resetConfigViz"
-        :array-columns-query="arrayColumnsQuery"
+        :config-map="configMapZoom"
+        :config="config"
         @showSaving="showSavingDialog"
-        @selectedChart="typeChart = $event"
       />
     </div>
   </div>
@@ -98,17 +95,13 @@ export default {
       type: Object,
       required: true
     },
-    arrayColumnsQuery: {
-      type: Array,
-      default: () => []
-    },
     objectColumns: {
       type: Object,
       default: () => {}
     },
-    geomColumn: {
-      type: String,
-      default: ''
+    configMap: {
+      type: Object,
+      default: () => {}
     },
     items: {
       type: String,
@@ -168,8 +161,8 @@ export default {
       showVisualize: true,
       removeLabelBtn: false,
       perspectiveChanged: false,
-      resetConfigViz: false,
-      typeChart: null,
+      config: null,
+      configMapZoom: { ...this.configMap, zoom: true }
     };
   },
   watch: {
@@ -177,6 +170,15 @@ export default {
       if (newValue) {
         this.$nextTick(() => this.$refs.savingDialogViz.inputFocus())
       }
+    }
+  },
+  mounted() {
+    if (sessionStorage.getItem("map-tab")) {
+      this.config = JSON.parse(sessionStorage.getItem("map-tab"))
+      sessionStorage.removeItem("map-tab")
+
+      // otherwise, it won't work ¬¬
+      setTimeout(() => this.$refs.viewer.toggleConfigPerspective(), 20);
     }
   },
   methods: {
@@ -196,16 +198,13 @@ export default {
       this.showVisualize = true
       this.perspectiveChanged = false
       this.showResetViz = false
-      this.resetConfigViz = true
-      this.typeChart = 'datagrid'
 
       this.$refs.viewer.toggleConfigPerspective();
-      this.$refs.viewer.setColumns();
+      this.$refs.viewer.resetConfig()
       this.$root.$emit('resetVizEvent')
     },
     showChart() {
       this.showVisualization = true
-      this.resetConfigViz = false
       this.$refs.viewer.toggleConfigPerspective();
     },
     showSavingDialog() {

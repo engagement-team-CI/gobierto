@@ -32,8 +32,7 @@
         v-if="items.length"
         :array-formats="arrayFormats"
         :object-columns="objectColumns"
-        :geom-column="geomColumn"
-        :array-columns-query="arrayColumnsQuery"
+        :config-map="configMap"
         :enabled-viz-saved-button="enabledVizSavedButton"
         :is-viz-modified="isVizModified"
         :is-query-saved="isQuerySaved"
@@ -76,13 +75,9 @@ export default {
       type: Object,
       default: () => {}
     },
-    geomColumn: {
-      type: String,
-      default: ''
-    },
-    arrayColumnsQuery: {
-      type: Array,
-      default: () => []
+    configMap: {
+      type: Object,
+      default: () => {}
     },
     publicQueries: {
       type: Array,

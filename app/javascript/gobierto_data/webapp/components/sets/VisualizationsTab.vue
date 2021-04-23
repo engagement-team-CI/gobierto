@@ -46,7 +46,7 @@
         :viz-id="vizId"
         :user-save-viz="userSaveViz"
         :object-columns="objectColumns"
-        :geom-column="geomColumn"
+        :config-map="configMap"
         @changeViz="showVizElement"
         @emitDelete="deleteHandlerVisualization"
       />
@@ -167,9 +167,9 @@ export default {
       type: Object,
       default: () => {}
     },
-    geomColumn: {
-      type: String,
-      default: ''
+    configMap: {
+      type: Object,
+      default: () => {}
     },
   },
   data() {

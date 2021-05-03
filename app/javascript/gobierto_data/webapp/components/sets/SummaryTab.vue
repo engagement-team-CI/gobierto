@@ -4,9 +4,8 @@
       :description-dataset="description"
       :category-dataset="category | translate"
       :frequency-dataset="frequency | translate"
-      :license-dataset="datasetLicense | translate"
-      :source-dataset="datasetSource"
-      :source-dataset-url="datasetSourceUrl"
+      :license-dataset="datasetLicense"
+      :source-dataset="datasetSourceObject"
       :date-updated="dateUpdated"
       :array-formats="arrayFormats"
     />
@@ -285,6 +284,7 @@ export default {
       datasetLicense: null,
       datasetSource: null,
       datasetSourceUrl: null,
+      datasetSourceObject: {},
       showYourQueries: true,
       showYourVizs: true,
       showMap: true,
@@ -325,6 +325,10 @@ export default {
       "dataset-source-url": this.datasetSourceUrl,
       description: this.description
     } = this.datasetAttributes); // Ouh yes, destructuring FTW 😎
+    this.datasetSourceObject = {
+      es: this.datasetSource,
+      url: this.datasetSourceUrl
+    }
   }
 };
 </script>

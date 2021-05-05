@@ -641,6 +641,7 @@ Rails.application.routes.draw do
               resources :favorites, only: [:index]
               collection do
                 get :meta
+                get :catalog
               end
               member do
                 get "meta" => "datasets#dataset_meta"

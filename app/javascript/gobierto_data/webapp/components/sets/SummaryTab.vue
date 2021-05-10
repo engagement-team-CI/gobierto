@@ -322,7 +322,6 @@ export default {
       data_updated_at: this.dateUpdated,
       category: [{ name_translations: this.category } = {}] = [],
       frequency: [{ name_translations: this.frequency } = {}] = [],
-      // "dataset-license": [{ name_translations: this.datasetLicense, description_translations: this.datasetLicenseUrl } = {}] = [],
       "dataset-license": [{ name_translations: this.datasetLicense, description_translations: this.datasetLicenseUrl } = {}] = [],
       "dataset-source": this.datasetSource,
       "dataset-source-url": this.datasetSourceUrl,
@@ -332,10 +331,9 @@ export default {
       text: this.datasetSource,
       url: this.datasetSourceUrl
     }
-
     this.datasetLicenseObject = {
-      text: this.datasetLicense,
-      url: this.datasetLicenseUrl
+      text: translate(this.datasetLicense),
+      url: translate(this.datasetLicenseUrl)
     }
   }
 };

@@ -380,8 +380,431 @@ jobs:
           name: Deploy master branch
           command: script/production_deploy.sh
 
+  bundle_dependencies_large:
+    <<: *defaults
+    resource_class: large
+    steps:
+      - checkout
+      - attach_workspace:
+          at: *working_directory
+
+      - restore_bundler_cache
+      - run:
+          name: "[Bundler] Install dependencies"
+          command: bundle install --path vendor/bundle --jobs=4 --retry=3  --without development
+      - save_cache:
+          name: "[Bundler] Cache dependencies"
+          key: gobierto-bundler-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - restore_yarn_cache
+      - run:
+          name: "[Yarn] Install dependencies"
+          command: yarn install
+      - save_cache:
+          name: "[Yarn] Cache dependencies"
+          key: gobierto-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+
+      # Copy database config
+      - run: cp config/database.yml.example config/database.yml
+
+      # Install custom engines
+      - run: script/custom_engines_ci_setup
+
+      # Compile I18n JS file
+      - run: bin/rails i18n:js:export
+
+      # Compile assets
+      - restore_assets_cache
+      - run: bin/rails assets:precompile
+      - save_cache:
+          name: "Cache assets"
+          key: gobierto-{{ .Environment.CACHE_VERSION }}-asset-cache-{{ .Branch }}
+          paths:
+            - public/assets
+            - public/packs-test
+            - tmp/cache/webpacker
+
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - db
+
+  tests_admin_large:
+    <<: *defaults
+    parallelism: 2
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_admin*' -name '*_test.rb' | grep -v 'gobierto_admin\/gobierto_' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_attachments_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_attachments*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_budgets_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_budgets*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_calendars_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_calendars*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_cms_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_cms*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_common_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_common*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_core_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_core*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_dashboards_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_dashboards*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_data_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_data*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_exports_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_exports*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_indicators_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_indicators*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_investments_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_investments*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_observatory_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_observatory*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_people_large:
+    <<: *defaults
+    parallelism: 2
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_people*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_plans_large:
+    <<: *defaults
+    parallelism: 2
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_plans*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_visualizations_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -path '*gobierto_visualizations*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_others_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find test -not -path '*gobierto_*' -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_engines_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(find -L vendor/gobierto_engines/ -name '*_test.rb' | circleci tests split --split-by=timings)"
+            bin/rails test $TEST_FILES
+      - store_test_results:
+          path: test/reports
+
+  tests_javascript_large:
+    <<: *defaults
+    steps:
+      - prepare_workspace
+      - run:
+          name: Run tests
+          command: |
+            yarn run test
+      - store_test_results:
+          path: test/reports
+
+  production-deploy_large:
+    working_directory: *working_directory
+    machine:
+      enabled: true
+    steps:
+      # deploy script is in the repository
+      - checkout
+      - run:
+          name: Deploy master branch
+          command: script/production_deploy.sh
+
 workflows:
   version: 2
+
+  hourly_with_high_RAM_use:
+    jobs:
+      - bundle_dependencies:
+          filters:
+            branches:
+              ignore:
+                - staging
+      - tests_admin:
+          requires:
+            - bundle_dependencies
+      - tests_attachments:
+          requires:
+            - bundle_dependencies
+      - tests_budgets:
+          requires:
+            - bundle_dependencies
+      - tests_calendars:
+          requires:
+            - bundle_dependencies
+      - tests_cms:
+          requires:
+            - bundle_dependencies
+      - tests_common:
+              requires:
+                - bundle_dependencies
+      - tests_core:
+          requires:
+            - bundle_dependencies
+      - tests_dashboards:
+            requires:
+              - bundle_dependencies
+      - tests_data:
+          requires:
+            - bundle_dependencies
+      - tests_exports:
+          requires:
+            - bundle_dependencies
+      - tests_indicators:
+          requires:
+            - bundle_dependencies
+      - tests_investments:
+          requires:
+            - bundle_dependencies
+      - tests_observatory:
+          requires:
+            - bundle_dependencies
+      - tests_people:
+          requires:
+            - bundle_dependencies
+      - tests_plans:
+          requires:
+            - bundle_dependencies
+      - tests_visualizations:
+          requires:
+            - bundle_dependencies
+      - tests_others:
+          requires:
+            - bundle_dependencies
+      - tests_engines:
+          requires:
+            - bundle_dependencies
+      - bundle_dependencies_large:
+          filters:
+            branches:
+              ignore:
+                - staging
+      - tests_admin_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_attachments_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_budgets_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_calendars_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_cms_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_common_large:
+              requires:
+                - bundle_dependencies_large
+      - tests_core_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_dashboards_large:
+            requires:
+              - bundle_dependencies_large
+      - tests_data_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_exports_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_indicators_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_investments_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_observatory_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_people_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_plans_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_visualizations_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_others_large:
+          requires:
+            - bundle_dependencies_large
+      - tests_engines_large:
+          requires:
+            - bundle_dependencies_large
+    triggers:
+      - schedule:
+          cron: 0 * * * *
+          filters:
+            branches:
+              only:
+                - engagement/large-resource-class-test
+
   build-and-deploy:
     jobs:
       - bundle_dependencies:

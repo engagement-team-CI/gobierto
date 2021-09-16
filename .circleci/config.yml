@@ -434,6 +434,7 @@ jobs:
             - db
 
   tests_admin_large:
+    resource_class: large
     <<: *defaults
     parallelism: 2
     steps:
@@ -447,6 +448,7 @@ jobs:
           path: test/reports
 
   tests_attachments_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -459,6 +461,7 @@ jobs:
           path: test/reports
 
   tests_budgets_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -471,6 +474,7 @@ jobs:
           path: test/reports
 
   tests_calendars_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -483,6 +487,7 @@ jobs:
           path: test/reports
 
   tests_cms_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -495,6 +500,7 @@ jobs:
           path: test/reports
 
   tests_common_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -507,6 +513,7 @@ jobs:
           path: test/reports
 
   tests_core_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -519,6 +526,7 @@ jobs:
           path: test/reports
 
   tests_dashboards_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -531,6 +539,7 @@ jobs:
           path: test/reports
 
   tests_data_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -543,6 +552,7 @@ jobs:
           path: test/reports
 
   tests_exports_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -555,6 +565,7 @@ jobs:
           path: test/reports
 
   tests_indicators_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -567,6 +578,7 @@ jobs:
           path: test/reports
 
   tests_investments_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -579,6 +591,7 @@ jobs:
           path: test/reports
 
   tests_observatory_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -591,6 +604,7 @@ jobs:
           path: test/reports
 
   tests_people_large:
+    resource_class: large
     <<: *defaults
     parallelism: 2
     steps:
@@ -604,6 +618,7 @@ jobs:
           path: test/reports
 
   tests_plans_large:
+    resource_class: large
     <<: *defaults
     parallelism: 2
     steps:
@@ -617,6 +632,7 @@ jobs:
           path: test/reports
 
   tests_visualizations_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -629,6 +645,7 @@ jobs:
           path: test/reports
 
   tests_others_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -641,6 +658,7 @@ jobs:
           path: test/reports
 
   tests_engines_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -653,6 +671,7 @@ jobs:
           path: test/reports
 
   tests_javascript_large:
+    resource_class: large
     <<: *defaults
     steps:
       - prepare_workspace
@@ -663,16 +682,17 @@ jobs:
       - store_test_results:
           path: test/reports
 
-  production-deploy_large:
-    working_directory: *working_directory
-    machine:
-      enabled: true
-    steps:
-      # deploy script is in the repository
-      - checkout
-      - run:
-          name: Deploy master branch
-          command: script/production_deploy.sh
+  # production-deploy_large:
+  #   resource_class: large
+  #   working_directory: *working_directory
+  #   machine:
+  #     enabled: true
+  #   steps:
+  #     # deploy script is in the repository
+  #     - checkout
+  #     - run:
+  #         name: Deploy master branch
+  #         command: script/production_deploy.sh
 
 workflows:
   version: 2
